@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Әкеге Құттықтау Кітабы</title>
+<style>
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    height: 100vh;
+    background-color: #eef2f3;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
+  }
+
+  .scene {
+    width: 100vw;
+    height: 100vh;
+    perspective: 1000px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .book {
+    position: relative;
+    width: 85vw; 
+    max-width: 320px;
+    height: 70vh;
+    max-height: 480px;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+  }
+
+  .book.open {
+    transform: translateX(0); 
+  }
+
+  .right-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fdfbf7;
+    border-radius: 5px 15px 15px 5px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1;
+    overflow-y: auto; 
+  }
+
+  .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform-origin: left center;
+    transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform-style: preserve-3d;
+    z-index: 2;
+  }
+
+  .book.open .cover {
+    transform: rotateY(-130deg); 
+  }
+
+  .cover-face {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 5px 15px 15px 5px;
+  }
+
+  .cover-front {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #14284d;
+    box-shadow: inset 3px 0 8px rgba(0,0,0,0.3);
+  }
+
+  .cover-back {
+    background: #fdfbf7;
+    transform: rotateY(180deg);
+    border-radius: 15px 5px 5px 15px;
+    box-shadow: inset -3px 0 8px rgba(0,0,0,0.1);
+  }
+
+  .cover-front h1 {
+    font-size: 26px; 
+    margin: 0;
+    text-align: center;
+    letter-spacing: 2px;
+    line-height: 1.4;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+
+  .cover-front p {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #ffd700;
+  }
+
+  .wishes {
+    text-align: center;
+    color: #2c3e50;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .wishes h2 {
+    color: #1e3c72;
+    font-size: 24px;
+    margin-top: 5px;
+    margin-bottom: 10px; /* Тақырып астындағы орынды кішірейттік */
+  }
+
+  .wishes p {
+    font-size: 15px; 
+    line-height: 1.3; /* Жолдар арасын жақындаттық (1.5-тен 1.3-ке) */
+    margin-bottom: 8px; /* Абзацтар арасын сәл азайттық */
+    text-align: center; /* СӨЗДЕР АРАСЫНДАҒЫ БОС ОРЫНДЫ ЖОЮ ҮШІН ОРТАҒА ТУРАЛАДЫҚ */
+    padding: 0 5px; 
+  }
+
+  .author {
+    text-align: center;
+    font-weight: bold;
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #bdc3c7;
+  }
+
+  .st { position: absolute; font-size: 20px; }
+  .st-1 { top: 15px; left: 15px; }
+  .st-2 { bottom: 15px; right: 15px; }
+  .st-3 { top: 15px; right: 15px; }
+  .st-4 { bottom: 15px; left: 15px; }
+
+  .spine {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(0,0,0,0.1));
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="book" id="myCard">
+    
+    <div class="right-page">
+      <div class="st st-1">🎁</div>
+      <div class="st st-2">🎉</div>
+      
+      <div class="wishes">
+        <h2>Құрметті Әке!</h2>
+        <p>Туған күніңізбен шын жүректен құттықтаймын!</p>
+        <p>Сізге мықты денсаулық, сарқылмас қуат, ұзақ әрі бақытты ғұмыр тілеймін. Әрбір бастаған ісіңіз берекелі болып, алға қойған мақсаттарыңызға жете беріңіз.</p>
+        <p>Отбасымыздың асқар тауы, тірегі болып, әрдайым аман-есен ортамызда жарқырап жүріңіз. Біз сізді өте қатты жақсы көреміз!</p>
+      </div>
+      
+      <div class="author">
+        ❤️ Автор: ALINUR ❤️
+      </div>
+    </div>
+
+    <div class="cover">
+      <div class="cover-face cover-front">
+        <div class="spine"></div>
+        <div class="st st-3">✨</div>
+        <div class="st st-4">⭐</div>
+        <h1>ӘКЕ<br>құттықтау</h1>
+        <p>Ашу / Жабу үшін басыңыз</p>
+      </div>
+      
+      <div class="cover-face cover-back">
+        <div class="spine" style="left: auto; right: 0;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('myCard');
+  card.addEventListener('click', function() {
+    card.classList.toggle('open');
+  });
+</script>
+
+</body>
+</html>
